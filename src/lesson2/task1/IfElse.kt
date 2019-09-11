@@ -4,6 +4,7 @@ package lesson2.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -63,12 +64,11 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String {
-    if ((age % 100) in 11..20) return "$age лет"
-    if ((age % 10) == 1) return "$age год"
-    if ((age % 10) in 2..4) return "$age года"
-    return "$age лет"
-}
+fun ageDescription(age: Int): String =
+    if ((age % 100) in 11..20) "$age лет"
+    else if ((age % 10) == 1) "$age год"
+    else if ((age % 10) in 2..4) "$age года"
+    else "$age лет"
 
 /**
  * Простая
@@ -82,10 +82,10 @@ fun timeForHalfWay(
     t2: Double, v2: Double,
     t3: Double, v3: Double
 ): Double {
-    val s = v1 * t1 + v2 * t2 + v3 * t3
-    if (v1 * t1 >= (s / 2)) return (s / 2) / v1
-    if (v2 * t2 + v1 * t1 >= (s / 2)) return (s / 2 - v1 * t1) / v2 + t1
-    return (s / 2 - v1 * t1 - v2 * t2) / v3 + t2 + t1
+    val s = (v1 * t1 + v2 * t2 + v3 * t3) / 2
+    return if (v1 * t1 >= s) s / v1
+    else if (v2 * t2 + v1 * t1 >= s) (s - v1 * t1) / v2 + t1
+    else (s - v1 * t1 - v2 * t2) / v3 + t2 + t1
 }
 
 /**
@@ -101,14 +101,13 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int {
+): Int =
     if (kingX == rookX1 || kingY == rookY1) {
-        if (kingX == rookX2 || kingY == rookY2) return 3
-        return 1
-    }
-    if (kingX == rookX2 || kingY == rookY2) return 2
-    return 0
-}
+        if (kingX == rookX2 || kingY == rookY2) 3
+        else 1
+    } else if (kingX == rookX2 || kingY == rookY2) 2
+    else 0
+
 
 /**
  * Простая
@@ -124,14 +123,13 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int {
+): Int =
     if ((kingX + kingY == bishopX + bishopY) || (kingY - kingX == bishopY - bishopX)) {
-        if (kingX == rookX || kingY == rookY) return 3
-        return 2
-    }
-    if (kingX == rookX || kingY == rookY) return 1
-    return 0
-}
+        if (kingX == rookX || kingY == rookY) 3
+        else 2
+    } else if (kingX == rookX || kingY == rookY) 1
+    else 0
+
 
 /**
  * Простая
@@ -142,20 +140,13 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    if ((a + b > c) && (a + c > b) && (b + c > a)) {
-        if (c > b && c > a) {
-            if (c * c == a * a + b * b) return 1
-            if (c * c > a * a + b * b) return 2
-            if (c * c < a * a + b * b) return 0
-        } else if (a > b) {
-            if (a * a == c * c + b * b) return 1
-            if (a * a > c * c + b * b) return 2
-            if (a * a < c * c + b * b) return 0
-        } else {
-            if (b * b == a * a + c * c) return 1
-            if (b * b > a * a + c * c) return 2
-            if (b * b < a * a + c * c) return 0
-        }
+    val big = max(a, max(b, c))
+    val small = min(a, min(b, c))
+    val middle = a + b + c - big - small
+    if (big < middle + small) {
+        if (big * big == middle * middle + small * small) return 1
+        if (big * big > middle * middle + small * small) return 2
+        if (big * big < middle * middle + small * small) return 0
     }
     return -1
 }
@@ -168,23 +159,17 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int =
     if (a <= c) {
-        if (b < c) {
-            return -1
-        } else {
-            if (b <= d) {
-                return b - c
-            } else {
-                return d - c
-            }
+        if (b < c) -1
+        else {
+            if (b <= d) b - c
+            else d - c
         }
     } else {
-        if (a > d) {
-            return -1
-        } else {
-            if (b <= d) return b - a
+        if (a > d) -1
+        else {
+            if (b <= d) b - a
+            else d - a
         }
     }
-    return d - a
-}
