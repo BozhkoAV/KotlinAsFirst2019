@@ -3,6 +3,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
+import java.lang.Math.abs
 import java.lang.Math.sqrt
 import kotlin.math.max
 import kotlin.math.min
@@ -32,8 +33,7 @@ fun isNumberHappy(number: Int): Boolean =
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-    (x1 + y1 == x2 + y2) || (y1 - x1 == y2 - x2) || (x1 == x2) || (y1 == y2)
-
+    (abs(y1 - x1) % 2 == abs(y2 - x2) % 2) || (x1 == x2) || (y1 == y2)
 
 /**
  * Простая
@@ -42,16 +42,10 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int =
-    if (month > 7) {
-        if (month % 2 == 0) 31
-        else 30
-    } else {
-        if (month % 2 == 0) {
-            if (month > 2) 30
-            else {
-                if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) 29
-                else 28
-            }
+    when {
+        month > 7 -> if (month % 2 == 0) 31 else 30
+        else -> if (month % 2 == 0) if (month > 2) 30 else {
+            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) 29 else 28
         } else 31
     }
 
