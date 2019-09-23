@@ -131,13 +131,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var m = n / 2
-    while (n % m > 0) {
-        m--
-    }
-    return m
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -207,7 +201,17 @@ fun collatzSteps(x: Int): Int {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var n = x % (2 * PI)
+    var i = 2
+    var sin = n
+    while (abs(n) >= eps) {
+        n = -n * x * x / (i * (i + 1))
+        sin += n
+        i += 2
+    }
+    return sin
+}
 
 /**
  * Средняя
@@ -218,7 +222,18 @@ fun sin(x: Double, eps: Double): Double = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var n = 1.0
+    var i = 1
+    var cos = 1.0
+    val y = x % (2 * PI)
+    while (abs(n) >= eps) {
+        n = -n * y * y / (i * (i + 1))
+        cos += n
+        i += 2
+    }
+    return cos
+}
 
 /**
  * Средняя
@@ -285,14 +300,14 @@ fun squareSequenceDigit(n: Int): Int {
         count += digitNumber(i * i)
     }
     count -= digitNumber(i * i)
-    var number = 1
+    var number: Long = 1
     for (j in 1..digitNumber(i * i)) {
         number *= 10
     }
     number /= 10
     var digit = 0
     while (count != n) {
-        digit = (i * i) / number % 10
+        digit = (i * i / number % 10).toInt()
         number /= 10
         count += 1
     }
@@ -316,14 +331,14 @@ fun fibSequenceDigit(n: Int): Int {
         count += digitNumber(fib(i))
     }
     count -= digitNumber(fib(i))
-    var number = 1
+    var number: Long = 1
     for (j in 1..digitNumber(fib(i))) {
         number *= 10
     }
     number /= 10
     var digit = 0
     while (count != n) {
-        digit = (fib(i)) / number % 10
+        digit = (fib(i) / number % 10).toInt()
         number /= 10
         count += 1
     }
