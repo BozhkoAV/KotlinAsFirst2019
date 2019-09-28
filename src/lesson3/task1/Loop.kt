@@ -202,11 +202,12 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var n = x % (2 * PI)
+    val y = x % (2 * PI)
+    var n = y
     var i = 2
     var sin = n
     while (abs(n) >= eps) {
-        n = -n * x * x / (i * (i + 1))
+        n = -n * y * y / (i * (i + 1))
         sin += n
         i += 2
     }
