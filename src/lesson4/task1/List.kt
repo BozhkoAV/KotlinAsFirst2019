@@ -117,11 +117,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double {
-    val abs = v.map { it * it }
-    return if (v.isNotEmpty()) sqrt(abs.sum())
-    else 0.0
-}
+fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(v.map { it * it }.sum()) else 0.0
 
 /**
  * Простая
@@ -156,11 +152,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    var c = 0
-    for (i in a.indices) {
-        c += a[i] * b[i]
-    }
-    return c
+    val list = a.mapIndexed { index, i -> i * b[index] }
+    return list.fold(0) { prev, elem -> prev + elem }
 }
 
 /**
@@ -172,15 +165,15 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    var result = 0
+    val xList = mutableListOf<Int>()
     for (i in p.indices) {
-        var el = p[i]
+        xList.add(1)
         for (j in 1..i) {
-            el *= x
+            xList[i] *= x
         }
-        result += el
     }
-    return result
+    val list = p.mapIndexed { index, i -> i * xList[index] }
+    return list.fold(0) { prev, elem -> prev + elem }
 }
 
 /**
@@ -261,23 +254,8 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String {
-    var list = listOf<Any>()
-    var x = n
-    if (x == 0) {
-        list = list + 0
-    }
-    while (x > 0) {
-        list = if (x % base > 9) {
-            list + ('a' + x % base - 10)
-        } else {
-            list + (x % base)
-        }
-        x /= base
-    }
-    list = list.reversed()
-    return list.joinToString(separator = "")
-}
+fun convertToString(n: Int, base: Int): String =
+    convert(n, base).map { if (it > 9) 'a' + it % base - 10 else '0' + it }.joinToString(separator = "")
 
 /**
  * Средняя
@@ -286,16 +264,7 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int {
-    val list = digits.reversed()
-    var x = 1
-    var sum = 0
-    for (element in list) {
-        sum += x * element
-        x *= base
-    }
-    return sum
-}
+fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base)
 
 /**
  * Сложная
@@ -309,21 +278,8 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int {
-    var list = str.toList()
-    list = list.reversed()
-    var x = 1
-    var sum = 0
-    for (element in list) {
-        sum += if ((element >= 'a') && (element <= 'z')) {
-            x * (element.toInt() - 87)
-        } else {
-            x * (element.toInt() - 48)
-        }
-        x *= base
-    }
-    return sum
-}
+fun decimalFromString(str: String, base: Int): Int =
+    polynom(str.toList().reversed().map { if (it >= 'a') it.toInt() - 87 else it.toInt() - 48 }, base)
 
 /**
  * Сложная
@@ -334,66 +290,19 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
+    val num = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val romNum = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
     var x = n
-    var list = listOf<Char>()
-    for (i in 1..(x / 1000)) {
-        list = list + 'M'
-    }
-    x %= 1000
-    if (x / 100 == 9) {
-        list = list + 'C' + 'M'
-    }
-    if ((x / 100 < 9) && (x / 100 >= 5)) {
-        list = list + 'D'
-        for (i in 6..(x / 100)) {
-            list = list + 'C'
+    var i = 12
+    var result = ""
+    while (x > 0) {
+        while (x >= num[i]) {
+            result += romNum[i]
+            x -= num[i]
         }
+        i--
     }
-    if (x / 100 == 4) {
-        list = list + 'C' + 'D'
-    }
-    if (x / 100 < 4) {
-        for (i in 1..(x / 100)) {
-            list = list + 'C'
-        }
-    }
-    x %= 100
-    if (x / 10 == 9) {
-        list = list + 'X' + 'C'
-    }
-    if ((x / 10 < 9) && (x / 10 >= 5)) {
-        list = list + 'L'
-        for (i in 6..(x / 10)) {
-            list = list + 'X'
-        }
-    }
-    if (x / 10 == 4) {
-        list = list + 'X' + 'L'
-    }
-    if (x / 10 < 4) {
-        for (i in 1..(x / 10)) {
-            list = list + 'X'
-        }
-    }
-    x %= 10
-    if (x == 9) {
-        list = list + 'I' + 'X'
-    }
-    if ((x < 9) && (x >= 5)) {
-        list = list + 'V'
-        for (i in 6..x) {
-            list = list + 'I'
-        }
-    }
-    if (x == 4) {
-        list = list + 'I' + 'V'
-    }
-    if (x < 4) {
-        for (i in 1..x) {
-            list = list + 'I'
-        }
-    }
-    return list.joinToString(separator = "")
+    return result
 }
 
 /**
