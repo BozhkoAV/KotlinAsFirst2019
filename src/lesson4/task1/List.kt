@@ -5,6 +5,7 @@ package lesson4.task1
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
 import lesson3.task1.minDivisor
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 /**
@@ -117,7 +118,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(v.map { it * it }.sum()) else 0.0
+fun abs(v: List<Double>): Double = if (v.isNotEmpty()) sqrt(v.sumByDouble { it * it }) else 0.0
 
 /**
  * Простая
@@ -151,10 +152,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Int>, b: List<Int>): Int {
-    val list = a.mapIndexed { index, i -> i * b[index] }
-    return list.fold(0) { prev, elem -> prev + elem }
-}
+fun times(a: List<Int>, b: List<Int>): Int = a.mapIndexed { index, i -> i * b[index] }.sum()
 
 /**
  * Средняя
@@ -164,17 +162,8 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Int>, x: Int): Int {
-    val xList = mutableListOf<Int>()
-    for (i in p.indices) {
-        xList.add(1)
-        for (j in 1..i) {
-            xList[i] *= x
-        }
-    }
-    val list = p.mapIndexed { index, i -> i * xList[index] }
-    return list.fold(0) { prev, elem -> prev + elem }
-}
+fun polynom(p: List<Int>, x: Int): Int =
+    p.mapIndexed { index, i -> i * x.toDouble().pow(index.toDouble()).toInt() }.sum()
 
 /**
  * Средняя
@@ -255,7 +244,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String =
-    convert(n, base).map { if (it > 9) 'a' + it % base - 10 else '0' + it }.joinToString(separator = "")
+    convert(n, base).joinToString(separator = "") { if (it >= 10) "${'a' + it - 10}" else "$it" }
 
 /**
  * Средняя
@@ -279,7 +268,7 @@ fun decimal(digits: List<Int>, base: Int): Int = polynom(digits.reversed(), base
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int =
-    polynom(str.toList().reversed().map { if (it >= 'a') it.toInt() - 87 else it.toInt() - 48 }, base)
+    polynom(str.toList().reversed().map { if (it >= 'a') it - 'W' else it - '0' }, base)
 
 /**
  * Сложная
