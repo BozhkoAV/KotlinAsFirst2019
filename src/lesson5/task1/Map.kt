@@ -114,7 +114,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     if (a.isEmpty() && b.isEmpty()) return true
-    if (b.isEmpty()) return false
+    if (a.isEmpty() || b.isEmpty()) return false
     for ((key, value) in b) {
         if (a[key] != null) {
             if (a[key] != value) {
@@ -254,7 +254,8 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     for (i in word.indices) {
         letters += word[i].toLowerCase()
     }
-    letters.removeAll(chars)
+    val charsLowerCase = chars.map { it.toLowerCase() }
+    letters.removeAll(charsLowerCase)
     return letters.isEmpty()
 }
 
