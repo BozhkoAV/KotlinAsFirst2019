@@ -126,6 +126,7 @@ class Tests {
         assertFalse(containsIn(mapOf("" to ""), mapOf()))
         assertTrue(containsIn(mapOf(), mapOf()))
         assertTrue(containsIn(mapOf(), mapOf("" to "")))
+        assertFalse(containsIn(mapOf("wo9" to "a"), mapOf("" to "")))
     }
 
     @Test
