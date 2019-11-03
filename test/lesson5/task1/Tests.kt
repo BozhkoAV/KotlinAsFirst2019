@@ -125,7 +125,7 @@ class Tests {
         assertFalse(containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")))
         assertFalse(containsIn(mapOf("" to ""), mapOf()))
         assertTrue(containsIn(mapOf(), mapOf()))
-        assertFalse(containsIn(mapOf(), mapOf("" to "")))
+        assertTrue(containsIn(mapOf(), mapOf("" to "")))
     }
 
     @Test
@@ -232,6 +232,13 @@ class Tests {
             findCheapestStuff(
                 mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0)),
                 "печенье"
+            )
+        )
+        assertEquals(
+            "",
+            findCheapestStuff(
+                mapOf("" to ("" to 1.7976931348623157e+308)),
+                ""
             )
         )
     }

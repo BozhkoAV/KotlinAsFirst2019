@@ -114,7 +114,8 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     if (a.isEmpty() && b.isEmpty()) return true
-    if (a.isEmpty() || b.isEmpty()) return false
+    if (b.isEmpty()) return false
+    if (a.isEmpty()) return true
     for ((key, value) in b) {
         if (a[key] != null) {
             if (a[key] != value) {
@@ -233,7 +234,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     val kindOfStuff = mutableMapOf<String, Pair<String, Double>>()
     for ((key, value) in stuff) {
-        if ((kindOfStuff[value.first]?.second ?: Double.MAX_VALUE) > value.second) {
+        if ((kindOfStuff[value.first]?.second ?: Double.MAX_VALUE) >= value.second) {
             kindOfStuff[value.first] = key to value.second
         }
     }
