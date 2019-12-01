@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 /**
  * Пример
  *
@@ -69,7 +71,35 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ").toMutableList()
+    if (parts.size > 3) return ""
+    try {
+        when (parts[1]) {
+            "января" -> parts[1] = "1"
+            "февраля" -> parts[1] = "2"
+            "марта" -> parts[1] = "3"
+            "апреля" -> parts[1] = "4"
+            "мая" -> parts[1] = "5"
+            "июня" -> parts[1] = "6"
+            "июля" -> parts[1] = "7"
+            "августа" -> parts[1] = "8"
+            "сентября" -> parts[1] = "9"
+            "октября" -> parts[1] = "10"
+            "ноября" -> parts[1] = "11"
+            "декабря" -> parts[1] = "12"
+            else -> return ""
+        }
+        if ((parts[0].toInt() <= daysInMonth(parts[1].toInt(), parts[2].toInt()))
+            and (parts[0].toInt() > 0) and (parts[2].toInt() >= 0)
+        ) {
+            return String.format("%02d.%02d.%s", parts[0].toInt(), parts[1].toInt(), parts[2])
+        }
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -81,7 +111,38 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".").toMutableList()
+    println(parts)
+    if (parts.size > 3) return ""
+    try {
+        if ((parts[0].toInt() <= daysInMonth(parts[1].toInt(), parts[2].toInt()))
+            and (parts[0].toInt() > 0) and (parts[2].toInt() >= 0)
+        ) {
+            when (parts[1].toInt()) {
+                1 -> parts[1] = "января"
+                2 -> parts[1] = "февраля"
+                3 -> parts[1] = "марта"
+                4 -> parts[1] = "апреля"
+                5 -> parts[1] = "мая"
+                6 -> parts[1] = "июня"
+                7 -> parts[1] = "июля"
+                8 -> parts[1] = "августа"
+                9 -> parts[1] = "сентября"
+                10 -> parts[1] = "октября"
+                11 -> parts[1] = "ноября"
+                12 -> parts[1] = "декабря"
+                else -> return ""
+            }
+            return String.format("%d %s %s", parts[0].toInt(), parts[1], parts[2])
+        }
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -97,7 +158,17 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    for (i in 0..phone.length - 2) {
+        if (phone[i].toString() + phone[i + 1] == "()") return ""
+    }
+    val phone2 =
+        phone.filter { it != ' ' }.filter { it != '-' }.filter { it != '_' }.filter { it != '(' }.filter { it != ')' }
+    var check = ""
+    if (phone2.first() == '+') check = "+"
+    if (phone2.filter { it !in '0'..'9' } == check) return phone2
+    return ""
+}
 
 /**
  * Средняя
@@ -109,7 +180,19 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val jumps2 = jumps.split(" ").toMutableList().filter { it != "%" }.filter { it != "-" }
+    if (jumps2.isEmpty()) return -1
+    var max = -1
+    try {
+        for (element in jumps2) {
+            if (element.toInt() > max) max = element.toInt()
+        }
+    } catch (e: NumberFormatException) {
+        return -1
+    }
+    return max
+}
 
 /**
  * Сложная
