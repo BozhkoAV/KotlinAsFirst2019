@@ -159,14 +159,18 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    for (i in 0..phone.length - 2) {
-        if (phone[i].toString() + phone[i + 1] == "()") return ""
+    try {
+        for (i in 0..phone.length - 2) {
+            if (phone[i].toString() + phone[i + 1] == "()") return ""
+        }
+        val phone2 =
+            phone.filter { it != ' ' }.filter { it != '-' }.filter { it != '_' }.filter { it != '(' }.filter { it != ')' }
+        var check = ""
+        if (phone2.first() == '+') check = "+"
+        if (phone2.filter { it !in '0'..'9' } == check) return phone2
+    } catch (e: NoSuchElementException) {
+        return ""
     }
-    val phone2 =
-        phone.filter { it != ' ' }.filter { it != '-' }.filter { it != '_' }.filter { it != '(' }.filter { it != ')' }
-    var check = ""
-    if (phone2.first() == '+') check = "+"
-    if (phone2.filter { it !in '0'..'9' } == check) return phone2
     return ""
 }
 
