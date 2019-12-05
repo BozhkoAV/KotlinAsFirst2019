@@ -117,7 +117,7 @@ fun dateDigitToStr(digital: String): String {
     if (parts.size > 3) return ""
     try {
         if ((parts[0].toInt() <= daysInMonth(parts[1].toInt(), parts[2].toInt()))
-            and (parts[0].toInt() > 0) and (parts[2].toInt() >= 0)
+            && (parts[0].toInt() > 0) && (parts[2].toInt() >= 0)
         ) {
             when (parts[1].toInt()) {
                 1 -> parts[1] = "января"
@@ -163,11 +163,14 @@ fun flattenPhoneNumber(phone: String): String {
         for (i in 0..phone.length - 2) {
             if (phone[i].toString() + phone[i + 1] == "()") return ""
         }
-        val phone2 =
-            phone.filter { it != ' ' }.filter { it != '-' }.filter { it != '_' }.filter { it != '(' }.filter { it != ')' }
+        val phone2 = phone.split(' ', '-', '_', '(', ')')
+        var phone3 = ""
+        for (element in phone2) {
+            phone3 += element
+        }
         var check = ""
-        if (phone2.first() == '+') check = "+"
-        if (phone2.filter { it !in '0'..'9' } == check) return phone2
+        if (phone3.first() == '+') check = "+"
+        if (phone3.filter { it !in '0'..'9' } == check) return phone3
     } catch (e: NoSuchElementException) {
         return ""
     }
@@ -185,17 +188,12 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val jumps2 = jumps.split(" ").toMutableList().filter { it != "%" }.filter { it != "-" }
-    if (jumps2.isEmpty()) return -1
-    var max = -1
-    try {
-        for (element in jumps2) {
-            if (element.toInt() > max) max = element.toInt()
-        }
+    val jumps2 = jumps.split(" ").toMutableList().filter { it != "%" && it != "-" }
+    return try {
+        jumps2.map { it.toInt() }.max() ?: -1
     } catch (e: NumberFormatException) {
-        return -1
+        -1
     }
-    return max
 }
 
 /**
@@ -209,7 +207,14 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val jumps2 = jumps.split(" ").toMutableList()
+    val jumps3 = mutableMapOf<Int, String>()
+    for (i in 0..jumps2.size - 2 step 2) {
+        jumps3[jumps2[i].toInt()] = jumps2[i + 1]
+    }
+    return jumps3.filterValues { it == "+" }.keys.max() ?: -1
+}
 
 /**
  * Сложная
@@ -220,7 +225,26 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val expression2 = expression.split(" ").toMutableList()
+    for (char in expression2[0]) {
+        require(char in '0'..'9')
+    }
+    var result = expression2[0].toInt()
+    for (i in 0 until expression2.size step 2) {
+        for (char in expression2[i]) {
+            require(char in '0'..'9' && char.toInt() >= 0)
+        }
+    }
+    for (i in 1..expression2.size - 2 step 2) {
+        when {
+            expression2[i] == "+" -> result += expression2[i + 1].toInt()
+            expression2[i] == "-" -> result -= expression2[i + 1].toInt()
+            else -> throw IllegalArgumentException()
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -231,7 +255,19 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val str2 = str.split(" ").map { it.toLowerCase() }
+    val map = mutableMapOf<Int, String>()
+    var result = 0
+    for (element in str2) {
+        map[result] = element
+        result += element.length + 1
+    }
+    for ((key, value) in map) {
+        if (map[key] == map[key + value.length + 1]) return key
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -244,7 +280,22 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val description2 = description.split(' ', ';').filter { it != "" }
+    print(description2)
+    val map = mutableMapOf<String, Double>()
+    try {
+        for (i in description2.indices step 2) {
+            map[description2[i]] = description2[i + 1].toDouble()
+        }
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    for ((key, value) in map) {
+        if (value == map.values.max()) return key
+    }
+    return ""
+}
 
 /**
  * Сложная
