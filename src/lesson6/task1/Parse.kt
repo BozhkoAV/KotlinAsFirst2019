@@ -91,7 +91,7 @@ fun dateStrToDigit(str: String): String {
             else -> return ""
         }
         if ((parts[0].toInt() <= daysInMonth(parts[1].toInt(), parts[2].toInt()))
-            and (parts[0].toInt() > 0) and (parts[2].toInt() >= 0)
+            && (parts[0].toInt() > 0) && (parts[2].toInt() >= 0)
         ) {
             return String.format("%02d.%02d.%s", parts[0].toInt(), parts[1].toInt(), parts[2])
         }
@@ -226,6 +226,7 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
+    require(expression != "")
     val expression2 = expression.split(" ").toMutableList()
     for (char in expression2[0]) {
         require(char in '0'..'9')
