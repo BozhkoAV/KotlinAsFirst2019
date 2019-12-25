@@ -352,4 +352,70 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val map = mutableMapOf<Pair<Int, Int>, Int>()
+    val listOfCapacity = mutableListOf<Int>()
+    for ((first) in treasures.values) {
+        listOfCapacity += first
+    }
+    val listOfTreasures = mutableListOf<String>()
+    for (key in treasures.keys) {
+        listOfTreasures += key
+    }
+    if (listOfCapacity.isEmpty()) return setOf()
+    if (capacity < listOfCapacity.min()!!) return setOf()
+    if (capacity < listOfCapacity.sum()) {
+        for (i in listOfCapacity.min()!!..capacity) {
+            if (i < (treasures[listOfTreasures[0]] ?: error("")).first) {
+                map[0 to i] = 0
+            } else {
+                map[0 to i] = (treasures[listOfTreasures[0]] ?: error("")).second
+            }
+        }
+        for (i in 1 until listOfTreasures.size) {
+            for (j in listOfCapacity.min()!!..capacity) {
+                if (j < (treasures[listOfTreasures[i]] ?: error("")).first) {
+                    map[i to j] = map[i - 1 to j]!!
+                } else {
+                    map[i to j] = (treasures[listOfTreasures[i]] ?: error("")).second +
+                            map[i - 1 to j - (treasures[listOfTreasures[i]] ?: error("")).first]!!
+                }
+            }
+        }
+    } else {
+        for (i in listOfCapacity.min()!!..listOfCapacity.sum()) {
+            if (i < (treasures[listOfTreasures[0]] ?: error("")).first) {
+                map[0 to i] = 0
+            } else {
+                map[0 to i] = (treasures[listOfTreasures[0]] ?: error("")).second
+            }
+        }
+        for (i in 1 until listOfTreasures.size) {
+            for (j in listOfCapacity.min()!!..listOfCapacity.sum()) {
+                if (j < (treasures[listOfTreasures[i]] ?: error("")).first) {
+                    map[i to j] = map[i - 1 to j]!!
+                } else {
+                    map[i to j] = (treasures[listOfTreasures[i]] ?: error("")).second +
+                            map[i - 1 to j - (treasures[listOfTreasures[i]] ?: error("")).first]!!
+                }
+            }
+        }
+    }
+    println(map)
+    /* val listOfTreasures = mutableListOf<String>()
+    for (element in treasures.keys) {
+        listOfTreasures += element
+    }
+    if (listOfTreasures.isEmpty()) return setOf()
+    println(listOfCapacity.sum())
+    println(listOfTreasures)
+    for (element in listOfCapacity.sorted()) {
+        map[listOfTreasures[0] to element] = map.getOrPut(listOfTreasures[0] to element) { 0 }
+    }
+    for (key in treasures.keys) {
+        for (element in listOfCapacity.sorted()) {
+            map[key to element] = map.getOrPut(key to element) { 0 } + (treasures[key]?.second ?: 0)
+        }
+    }*/
+    return setOf()
+}

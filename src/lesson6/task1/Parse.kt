@@ -348,3 +348,25 @@ fun fromRoman(roman: String): Int = TODO()
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+
+fun money(sum: Double, coins: String): List<Pair<Int, Double>> {
+    require(sum >= 0)
+    val list = coins.split(", ")
+    for (element in list) {
+        require(element.matches(Regex("""[0-9]+.[0-9]+""")) || element.matches(Regex("""[0-9]+""")))
+    }
+    val listDouble = list.map { it.toDouble() }
+    var result = sum
+    val finalList = mutableListOf<Pair<Int, Double>>()
+    for (i in listDouble.indices) {
+        var count = 0
+        while (result >= listDouble[i]) {
+            result -= listDouble[i]
+            count++
+        }
+        if (count > 0) {
+            finalList += count to listDouble[i]
+        }
+    }
+    return finalList
+}

@@ -155,4 +155,48 @@ class Tests {
         assertThrows(IllegalArgumentException::class.java) { computeDeviceCells(10, "+>+>[+>", 3) }
         assertThrows(IllegalStateException::class.java) { computeDeviceCells(20, ">>>>>>>>>>>>>", 12) }
     }
+
+    @Test
+    fun money() {
+        assertEquals(
+            listOf(
+                1 to 5000.0,
+                2 to 1000.0,
+                1 to 500.0,
+                1 to 100.0,
+                3 to 10.0,
+                1 to 2.0,
+                1 to 1.0,
+                2 to 0.1,
+                1 to 0.01
+            ), money(7633.21, "5000, 1000, 500, 100, 50, 10, 5, 2, 1, 0.50, 0.10, 0.05, 0.01")
+        )
+        assertEquals(
+            listOf<Pair<Int, Double>>(), money(0.0, "5000, 1000, 500, 100, 50, 10, 5, 2, 1, 0.50, 0.10, 0.05, 0.01")
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            money(
+                -101.01,
+                "5000, 1000, 500, 100, 50, 10, 5, 2, 1, 0.50, 0.10, 0.05, 0.01"
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            money(
+                101.01,
+                "5000, тысяча, 500, 100, 50, 10, 5, 2, 1, 0.50, 0.10, 0.05, 0.01"
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            money(
+                101.01,
+                "5000, 1000., 500, 100, 50, 10, 5, 2, 1, 0.50, 0.10, 0.05, 0.01"
+            )
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            money(
+                101.01,
+                "5000, 1000, 500, 100, 50, 10, 5, 2, 1, 0.5.0, 0.10, 0.05, 0.01"
+            )
+        }
+    }
 }
