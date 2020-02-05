@@ -528,3 +528,80 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     TODO()
 }
 
+fun foo(tStart: String, tEnd: String): String {
+    var result = ""
+    require(tStart.matches(Regex("""\d{2}:\d{2}""")) && tStart.matches(Regex("""\d{2}:\d{2}""")))
+    val start = tStart.split(":")[0].toInt() * 60 + tStart.split(":")[1].toInt()
+    val end = tEnd.split(":")[0].toInt() * 60 + tEnd.split(":")[1].toInt()
+    require(start in 0..1439 && end in 0..1439)
+    if (start <= end) {
+        for (number in start..end) {
+            result += numberToString(number / 60 / 10) + " "
+            result += numberToString(number / 60 % 10) + ":"
+            result += numberToString(number % 60 / 10) + " "
+            result += numberToString(number % 60 % 10) + " "
+        }
+    } else {
+        for (number in start..end + 1440) {
+            result += numberToString(number % 1440 / 60 / 10) + " "
+            result += numberToString(number % 1440 / 60 % 10) + ":"
+            result += numberToString(number % 1440 % 60 / 10) + " "
+            result += numberToString(number % 1440 % 60 % 10) + " "
+        }
+    }
+    return result.trim()
+}
+
+fun numberToString(number: Int) = when (number) {
+    0 -> "ABCDEF"
+    1 -> "BC"
+    2 -> "ABDEG"
+    3 -> "ABCDG"
+    4 -> "BCFG"
+    5 -> "ACDFG"
+    6 -> "ACDEFG"
+    7 -> "ABC"
+    8 -> "ABCDEFG"
+    9 -> "ABCDFG"
+    else -> throw IllegalArgumentException()
+}
+
+fun foo5(tStart: String, tEnd: String, out: String) {
+    val writer = File(out).bufferedWriter()
+    require(tStart.matches(Regex("""\d{2}:\d{2}""")) && tStart.matches(Regex("""\d{2}:\d{2}""")))
+    val start = tStart.split(":")[0].toInt() * 60 + tStart.split(":")[1].toInt()
+    var end = tEnd.split(":")[0].toInt() * 60 + tEnd.split(":")[1].toInt()
+    require(start in 0..1439 && end in 0..1439)
+    if (start > end) {
+        end += 1440
+    }
+    for (number in start..end) {
+        for (i in 0..2) {
+            writer.write(symbolToChar(number, i))
+            writer.newLine()
+        }
+    }
+    writer.close()
+}
+
+fun numberToSymbol(number: Int) = when (number) {
+    0 -> listOf(" _ ", "| |", "|_|")
+    1 -> listOf("   ", "  |", "  |")
+    2 -> listOf(" _ ", " _|", "|_ ")
+    3 -> listOf(" _ ", " _|", " _|")
+    4 -> listOf("   ", "|_|", "  |")
+    5 -> listOf(" _ ", "|_ ", " _|")
+    6 -> listOf(" _ ", "|_ ", "|_|")
+    7 -> listOf(" _ ", "  |", "  |")
+    8 -> listOf(" _ ", "|_|", "|_|")
+    9 -> listOf(" _ ", "|_|", " _|")
+    else -> throw IllegalArgumentException()
+}
+
+fun symbolToChar(number: Int, line: Int) = when (line) {
+    0 -> numberToSymbol(number % 1440 / 60 / 10)[line] + " " + numberToSymbol(number % 1440 / 60 % 10)[line] + "   " +
+            numberToSymbol(number % 1440 % 60 / 10)[line] + " " + numberToSymbol(number % 1440 % 60 % 10)[line]
+    in 1..2 -> numberToSymbol(number % 1440 / 60 / 10)[line] + " " + numberToSymbol(number % 1440 / 60 % 10)[line] + " . " +
+            numberToSymbol(number % 1440 % 60 / 10)[line] + " " + numberToSymbol(number % 1440 % 60 % 10)[line]
+    else -> throw IllegalArgumentException()
+}

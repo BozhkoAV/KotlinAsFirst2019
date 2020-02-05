@@ -1,6 +1,7 @@
 package lesson7.task1
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -429,5 +430,35 @@ Basic, Ruby, Swift.
         )
 
         File("temp.txt").delete()
+    }
+
+    @Test
+    fun foo() {
+        assertEquals("BC ABDEG:ABCDEF ABCDEF", foo("12:00", "12:00"))
+        assertEquals(
+            "ABDEG ABCDG:ACDFG ABCDFG",
+            foo("23:59", "23:59")
+        )
+        assertEquals(
+            "ABDEG ABCDG:ACDFG ABCDFG ABCDEF ABCDEF:ABCDEF ABCDEF ABCDEF ABCDEF:ABCDEF BC",
+            foo("23:59", "00:01")
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            foo("23:59A", "00:01")
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            foo("23:60", "00:01")
+        }
+        assertEquals(
+            "ABDEG ABCDG:ACDFG ABC ABDEG ABCDG:ACDFG ABCDEFG ABDEG ABCDG:ACDFG ABCDFG",
+            foo("23:57", "23:59")
+        )
+    }
+
+    @Test
+    fun foo5() {
+        foo5("23:47", "02:47", "out.txt")
+        assertFileContent("out.txt", "")
+        File("out.txt").delete()
     }
 }
