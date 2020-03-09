@@ -19,9 +19,7 @@ package lesson12.task1
  */
 class PhoneBook {
 
-    private val names: MutableSet<Human> = mutableSetOf()
-
-    class Human(val humanName: String, val numbers: MutableSet<String>)
+    private val book: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
     /**
      * Добавить человека.
@@ -30,9 +28,8 @@ class PhoneBook {
      * (во втором случае телефонная книга не должна меняться).
      */
     fun addHuman(name: String): Boolean {
-        return if (names.find { it.humanName == name } == null) {
-            val add = Human(name, mutableSetOf())
-            names += add
+        return if (book[name] == null) {
+            book[name] = mutableSetOf()
             true
         } else {
             false
@@ -46,9 +43,8 @@ class PhoneBook {
      * (во втором случае телефонная книга не должна меняться).
      */
     fun removeHuman(name: String): Boolean {
-        return if (names.find { it.humanName == name } != null) {
-            val remove = Human(name, mutableSetOf())
-            names -= remove
+        return if (book[name] != null) {
+            book.remove(name)
             true
         } else {
             false
@@ -63,15 +59,14 @@ class PhoneBook {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     fun addPhone(name: String, phone: String): Boolean {
-        if (names.find { it.humanName == name } != null) {
-            if (names.filter { it.humanName == name }.find { phone in it.numbers } == null) {
-                if (names.all { phone !in it.numbers }) {
-                    names.filter { it.humanName == name }.map { it.numbers += phone }
-                    return true
+        if (book[name] != null) {
+            for (element in book) {
+                if (element.value.any { it == phone }) {
+                    return false
                 }
-                return false
             }
-            return false
+            book[name]!!.add(phone)
+            return true
         }
         return false
     }
@@ -83,12 +78,9 @@ class PhoneBook {
      * либо у него не было такого номера телефона.
      */
     fun removePhone(name: String, phone: String): Boolean {
-        if (names.find { it.humanName == name } != null) {
-            if (names.filter { it.humanName == name }.find { phone in it.numbers } != null) {
-                names.filter { it.humanName == name }.map { it.numbers -= phone }
-                return true
-            }
-            return false
+        if ((book[name] != null) && (book[name]?.any { it == phone } == true)) {
+            book[name]!!.remove(phone)
+            return true
         }
         return false
     }
@@ -97,13 +89,18 @@ class PhoneBook {
      * Вернуть все номера телефона заданного человека.
      * Если этого человека нет в книге, вернуть пустой список
      */
-    fun phones(name: String): Set<String> = names.find { it.humanName == name }?.numbers ?: setOf()
+    fun phones(name: String): Set<String> = book[name] ?: setOf()
 
     /**
      * Вернуть имя человека по заданному номеру телефона.
      * Если такого номера нет в книге, вернуть null.
      */
-    fun humanByPhone(phone: String): String? = names.find { phone in it.numbers }?.humanName
+    fun humanByPhone(phone: String): String? {
+        for ((key, value) in book) {
+            if (value.any { it == phone }) return key
+        }
+        return null
+    }
 
     /**
      * Две телефонные книги равны, если в них хранится одинаковый набор людей,
@@ -113,30 +110,17 @@ class PhoneBook {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PhoneBook) return false
-        val otherBook = other.names
-        for (human in this.names) {
-            if (otherBook.find { it.humanName == human.humanName } != null) {
-                val intersection = human.numbers.intersect(otherBook.find { it.humanName == human.humanName }!!.numbers)
-                if ((intersection != human.numbers) ||
-                    (intersection != otherBook.find { it.humanName == human.humanName }!!.numbers)
-                ) return false
-                otherBook -= otherBook.find { it.humanName == human.humanName }!!
-            } else {
+        for (name in this.book.keys) {
+            if (this.phones(name) != other.phones(name)) {
                 return false
             }
         }
-        if (otherBook.isNotEmpty()) return false
-        return true
+        return (other.book.keys - this.book.keys).isEmpty()
     }
 
     override fun hashCode(): Int {
         var result = 13
-        for (human in names) {
-            for (number in human.numbers) {
-                result += number.hashCode()
-            }
-            result += human.humanName.hashCode()
-        }
+        result += book.hashCode() * 31
         return result
     }
 }

@@ -65,6 +65,8 @@ internal class ComplexTest {
 
     @Test
     fun testToString() {
-        assertTrue(Complex(1.0, 2.0).toString() == "1+2i")
+        assertTrue(Complex(1.0, 2.0).toString() == "1.0+2.0i")
+        assertTrue(Complex(-1.0, 0.0).toString() == "-1.0")
+        assertTrue(Complex(1.0, -2.0).toString() == "1.0-2.0i")
     }
 }

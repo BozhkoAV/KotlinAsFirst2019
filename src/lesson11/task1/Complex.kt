@@ -23,11 +23,9 @@ class Complex(val re: Double, val im: Double) {
     /**
      * Конструктор из строки вида x+yi
      */
-    constructor(s: String) : this(
-        s.split(Regex("""\b[-|+]"""))[0].toDouble(),
-        s.split(Regex("""\b[-|+]"""))[1].filter { it != 'i' }.toDouble()
-                * if (s.contains(Regex("""\b[-]"""))) -1 else 1
-    )
+    constructor(s: String) : this(s.filter { it != 'i' }.split(Regex("""\b[-|+]"""))[0].toDouble(),
+        s.filter { it != 'i' }.split(Regex("""\b[-|+]"""))[1].toDouble()
+                * if (s.contains(Regex("""\b[-]"""))) -1 else 1)
 
     /**
      * Сложение.
@@ -76,8 +74,5 @@ class Complex(val re: Double, val im: Double) {
     /**
      * Преобразование в строку
      */
-    override fun toString(): String =
-        "${if (re - re.toInt() > 0.0) re else re.toInt()}" +
-                if (im >= 0.0) "+${if (im - im.toInt() > 0.0) im else im.toInt()}i"
-                else "${if (im - im.toInt() > 0.0) im else im.toInt()}i"
+    override fun toString(): String = "$re" + if (im > 0.0) "+${im}i" else if (im == 0.0) "" else "${im}i"
 }
